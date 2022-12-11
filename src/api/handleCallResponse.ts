@@ -15,17 +15,17 @@ export const handler = async (event, context) => {
   try {
     // trigger success condition
     console.log("CALL RESPONSE CALLED:", event.queryStringParameters, parse(event.body))
-    const { Command, MEMBER_INDEX } = event.queryStringParameters;
+    const { Command, CALL_INDEX } = event.queryStringParameters;
     const { Called, Digits } = parse(event.body);
     console.log({Command, Called, Digits})
     
-    if (!Command || !MEMBER_INDEX) {
+    if (!Command || !CALL_INDEX) {
       console.log("Received Twilio Status:", parse(event.body))
       return { statusCode: 200 }
     }
 
-    const MEMBER = MEMBERS[MEMBER_INDEX];
-    const { fname } = MEMBER;
+    const MEMBER_INDEX = GET_MEMBER_INDEX(CALL_INDEX);
+    const { fname, ...MEMBER } = MEMBERS[MEMBER_INDEX];
     
     const response = new VoiceResponse();
     // Pressing 1 = Someone says they can handle it
@@ -33,15 +33,17 @@ export const handler = async (event, context) => {
 
       console.log(fname,"'s handling it! Hurrah!")
       const CONTACT_LIST = GENERATE_CALL_LIST(MEMBERS, MEMBER);
-      const CONFIRMATION_SMS = [
-        `${fname}, nous vous remercions d'avoir accepté d'aider Tante Marie Francoise a la ferme de Rennetour, Saint-Viatre.`,
-        `Cette alerte vous est parvenu car ${ Command === "FALL_TRIGGERED" ? "le bracelet a détecté une chute" : "Marie Fracoise l'a déclenché" }`,
-        `Le téléphone de Marie-Francoise : 06 16 28 55 63`,
+      const CONFIRMATION_SMS = MEMBER_INDEX === "0" // If the 'victim' presses 1 to cancel, then send an acknowledgement SMS
+      ? "Nous avons annulé l'alerte"
+      : [ // Otherwise send a thank you + instructions SMS to the rest of the people on the list.
+        `${fname}, nous vous remercions d'avoir accepté d'aider ${MEMBERS[0].fname} a la ferme de Rennetour, Saint-Viatre.`,
+        `Cette alerte vous est parvenue car ${ Command === "FALL_TRIGGERED" ? `le bracelet de ${MEMBERS[0].fname} a détecté une chute` : `${MEMBERS[0].fname} l'a déclenchée` }`,
         "",
-        `D'autres numèros qui vous pourrait etre utile :`,
+        `D'autres numèros qui pourraient vous etre utile :`,
         `${CONTACT_LIST}`,
-        "",
         `CLIQUEZ LE LIEN CI DESSOUS SI VOUS AVEZ CONFIRMÉ QUE LA SITUATION EST OK :`,
+        "[lien eventuel]",
+
         //,
       ].join("\n");
       
@@ -71,7 +73,7 @@ export const handler = async (event, context) => {
       await triggerAlert({
         queryStringParameters: {
           Command,
-          MEMBER_INDEX: parseInt(MEMBER_INDEX) + 1 // TODO wrap around / handle end of list behavior
+          CALL_INDEX: parseInt(CALL_INDEX) + 1 // TODO wrap around / handle end of list behavior
         }
       })
     }

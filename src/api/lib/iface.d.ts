@@ -1,0 +1,1 @@
+export interface Imember { fname: string, lname: string, phone_number: string }
