@@ -1,7 +1,7 @@
 # example netlify.toml
 [build]
   command = "npm run build"
-  publish = "dist"
+  # publish = "dist"
   functions = "src/api"
 [functions]
   included_files = ["lib/**"]
