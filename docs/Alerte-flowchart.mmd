@@ -1,0 +1,21 @@
+::: mermaid
+%% https://mermaid-js.github.io/mermaid/#/flowchart?id=flowchart-orientation
+flowchart TB
+subgraph "Déclenchement alarme"
+   subgraph "Déclenchement Bouton Appuyé"
+      C[Bouton Appuyé] --> D{Appeller Membre avec instructions vocal}
+   end
+   subgraph "Detection Chute"
+      A[Detection de Chute] --> B{Appuyer pour annuler}
+      B -->|Appuyer Bouton| Z[Annulé]
+      B ---->|Apres 10 secondes| D
+   end
+end
+   subgraph "Chercher un intevenant"
+      D ----> |Appel telephonique| E{Reponse du membre}
+      E -->|Pas de réponse| F
+      E -->|1 appuyé 'decliner'| F[Membre ne peut pas intervenir] --> H(Passer au membre suivant)
+      H --> D
+      E -->|2 appuyé 'accepté'| G[Envoyer SMS 'OK' aux membres]
+    end
+:::

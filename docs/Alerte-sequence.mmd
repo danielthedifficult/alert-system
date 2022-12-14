@@ -1,0 +1,16 @@
+::: mermaid
+%% https://mermaid-js.github.io/mermaid/#/sequence
+sequenceDiagram
+participant B as Bracelet
+participant P as P100G
+participant T as Twilio
+participant A as Alert System API
+participant M as Modem 4G
+ B ->> P: Bouton appuyé;
+ B ->> B: Chute détecté, annulé manuellement;
+ B ->> P: Chute détecté;
+ P --> M: Signal electrique;
+ M ->> T: SMS au 2936 avec "ALERT_TRIGGER";
+ P ->> T: SMS avec "ALERT_TRIGGER";
+ T ->> A: Webhook trigger;
+:::
