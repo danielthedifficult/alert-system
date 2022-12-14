@@ -15,7 +15,7 @@ import { handler as triggerAlert } from "../ReceiveAlert/ReceiveAlert";
 export const handler = async (event, context) => {
   try {
     // trigger success condition
-    console.log("CALL RESPONSE CALLED:", event.queryStringParameters, parse(event.body))
+    console.log("PROCESS CALL RESPONSE CALLED:", event.queryStringParameters, parse(event.body))
     const { Command, CALL_INDEX } = event.queryStringParameters;
     const { Called, Digits } = parse(event.body);
     console.log({Command, Called, Digits})

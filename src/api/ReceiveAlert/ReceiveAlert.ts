@@ -16,7 +16,7 @@ export const handler = async (event) => {
 	let MEMBER_INDEX = GET_MEMBER_INDEX(GET.CALL_INDEX || "0")
 
 	if (GET.Command) Command = GET.Command;
-	console.log("TRIGGER ALERT CALLED, COMMAND is ", Command, "for MEMBER_INDEX", MEMBER_INDEX)
+	console.log("ReceiveAlert CALLED, COMMAND is ", Command, "for MEMBER_INDEX", MEMBER_INDEX)
 
 		process.env.DEPLOY_URL = "https://alert-system-1b2f57.netlify.live"; // update this in dev when relaunching the server
 		try {
