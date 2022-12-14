@@ -20,6 +20,4 @@ export const GET_MEMBER_INDEX = (input) => {
 	input = parseInt(input);
 	if (isNaN(input)) throw new Error("Input is NaN");
 	else return (input % MEMBERS.length)
-	// if (input < MEMBERS.length) return input;
-	// else if (input >= MEMBERS.length) return input % MEMBERS.length + 1;
 }

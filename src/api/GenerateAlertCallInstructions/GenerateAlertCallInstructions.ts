@@ -1,5 +1,5 @@
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
-const { MEMBERS, VOICE_PARAMS } = require("./lib/");
+const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
 export const handler = async (event) => {
   console.log("ALERT CALL INSTRUCTIONS CALLED WITH:", event.queryStringParameters)
@@ -35,7 +35,7 @@ export const handler = async (event) => {
       // console.log(prompt)
   gather.say(prompt, VOICE_PARAMS)
 
-  response.redirect({method: "GET"}, `/api/triggerAlert?MEMBER_INDEX=${CALL_INDEX+1}&Command=${Command}`);
+  response.redirect({method: "GET"}, `/api/ReceiveAlert?MEMBER_INDEX=${CALL_INDEX+1}&Command=${Command}`);
   // Render the response as XML in reply to the webhook request
   return {
     statusCode: 200,

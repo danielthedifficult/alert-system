@@ -4,12 +4,13 @@ var authToken = process.env.DM_TWILIO_AUTH_TOKEN; // Your Auth Token from www.tw
 const client  = require('twilio')(accountSid, authToken)
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
-const { MEMBERS, VOICE_PARAMS } = require("./lib/");
+const { MEMBERS, VOICE_PARAMS } = require("../lib/");
 
 const { parse } = require('querystring');
 
-import { GENERATE_CALL_LIST } from "./lib";
-import { handler as triggerAlert } from "./triggerAlert";
+import { GENERATE_CALL_LIST } from "../lib";
+import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING } from "../lib/messageTemplates";
+import { handler as triggerAlert } from "../ReceiveAlert/ReceiveAlert";
 
 export const handler = async (event, context) => {
   try {
@@ -34,7 +35,7 @@ export const handler = async (event, context) => {
       console.log(fname,"'s handling it! Hurrah!")
       const CONTACT_LIST = GENERATE_CALL_LIST(MEMBERS, MEMBER);
       const CONFIRMATION_SMS = MEMBER_INDEX === "0" // If the 'victim' presses 1 to cancel, then send an acknowledgement SMS
-      ? "Nous avons annulé l'alerte"
+      ? ALERT_CANCELLED
       : [ // Otherwise send a thank you + instructions SMS to the rest of the people on the list.
         `${fname}, nous vous remercions d'avoir accepté d'aider ${MEMBERS[0].fname} a la ferme de Rennetour, Saint-Viatre.`,
         `Cette alerte vous est parvenue car ${ Command === "FALL_TRIGGERED" ? `le bracelet de ${MEMBERS[0].fname} a détecté une chute` : `${MEMBERS[0].fname} l'a déclenchée` }`,
@@ -47,7 +48,7 @@ export const handler = async (event, context) => {
         //,
       ].join("\n");
       
-      console.log("SMS: Would have sent:", CONFIRMATION_SMS)
+      console.log("Sending SMS:", CONFIRMATION_SMS)
       let to = MEMBER.phone_number;
       to = "+33761852939" // override for testing;
 
@@ -59,15 +60,15 @@ export const handler = async (event, context) => {
           from: process.env.TWILIO_FROM_NUMBER, 
           to
         })
-        .then(message => console.log(`Sent SMS to ${fname}:`, message.sid))
+        .then((results : {sid: string}) => console.log(`Sent SMS to ${fname}:`, results.sid))
         .catch(console.error)
 
-      response.say(`Merci ${fname}, nous comptons sur vous en toute urgence.`, VOICE_PARAMS)
+      response.say(YOURE_OUR_ONLY_HOPE, VOICE_PARAMS)
     }
     else {
       // Pressing 2, hanging up, etc.
       console.log(fname, "can't handle it, let's keep trying...")
-      response.say("Nous allons continuer a appeller pour trouver un intervenant, et nous vous tiendrons a jour via SMS.", VOICE_PARAMS)
+      response.say(WE_WILL_KEEP_LOOKING, VOICE_PARAMS)
       
       // Call next member
       await triggerAlert({
