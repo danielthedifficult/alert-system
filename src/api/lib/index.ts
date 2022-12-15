@@ -16,8 +16,21 @@ export const GENERATE_CALL_LIST = (members:Array<Imember>, member : Imember) => 
 
 // if input < total member length return the member
 // if input >= total member length, return the member, starting with 1 (skip the 'alerting' person themselves when repeating)
-export const GET_MEMBER_INDEX = (input) => {
-	input = parseInt(input);
-	if (isNaN(input)) throw new Error("Input is NaN");
-	else return (input % MEMBERS.length)
+export const GET_MEMBER_INDEX = (input:(string)) => {
+	let index = parseInt(input);
+	if (isNaN(index)) throw new Error("Input is NaN");
+	else return (index % MEMBERS.length)
+}
+
+const { parse } = require('querystring');
+export const EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT = ({queryStringParameters = {}, body = ""}) => {
+	let POST = {}; 
+	try {
+		POST = JSON.parse(body)
+	} catch (e) {
+		POST = parse(body)
+	}
+	let PARAMS:any = { ...POST, ...queryStringParameters  }
+	console.log("Extracted params:", PARAMS)
+	return PARAMS;
 }

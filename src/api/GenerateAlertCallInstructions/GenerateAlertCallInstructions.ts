@@ -1,9 +1,14 @@
+import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT } from "../lib";
+
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
 export const handler = async (event) => {
-  console.log("GENERATE ALERT CALL INSTRUCTIONS CALLED WITH:", event.queryStringParameters)
-  const { Command, CALL_INDEX } = event.queryStringParameters;
+
+  const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
+
+  console.log("GENERATE ALERT CALL INSTRUCTIONS CALLED WITH:", PARAMS)
+  const { Command, CALL_INDEX } = PARAMS;
   const MEMBER_INDEX = GET_MEMBER_INDEX(CALL_INDEX)
   const MEMBER = MEMBERS[MEMBER_INDEX];
 
@@ -23,9 +28,9 @@ export const handler = async (event) => {
   const response = new VoiceResponse();
 
   // Use the <Gather> verb to collect user input
-  const gather = response.gather({ numDigits: 1, action: `/api/handleCallResponse?Command=${Command}&CALL_INDEX=${MEMBER_INDEX}` });
+  const gather = response.gather({ numDigits: 1, action: `/api/ProcessCallResponse?Command=${Command}&CALL_INDEX=${MEMBER_INDEX}` });
   const prompt = parseInt(MEMBER_INDEX) === 0
-    ? `Bonjour ${MEMBERS[0].fname}, le systeme d'alerte a été déclenché. Appuyez sur 1 pour désactiver, ou 2 pour continuer.`
+    ? `Bonjour ${MEMBERS[0].fname}, le système d'alerte a été déclenché. Appuyez sur 1 pour désactiver, ou 2 pour demander de l'aide.`
     : `Attention ${MEMBER.fname}, ${incidentType} la ferme de Rennetour. 
       Si vous pouvez vous en occuper, appuyez sur "1". 
       Si vous ne pouvez pas intervenir, appuyer sur "2" pour que nous contactions la personne suivante.
@@ -35,7 +40,7 @@ export const handler = async (event) => {
       // console.log(prompt)
   gather.say(prompt, VOICE_PARAMS)
 
-  response.redirect({method: "GET"}, `/api/ReceiveAlert?MEMBER_INDEX=${parseInt(CALL_INDEX)+1}&Command=${Command}`);
+  response.redirect({method: "GET"}, `/api/ReceiveAlert?CALL_INDEX=${parseInt(CALL_INDEX)+1}&Command=${Command}`);
   // Render the response as XML in reply to the webhook request
   return {
     statusCode: 200,

@@ -4,24 +4,24 @@ var authToken = process.env.DM_TWILIO_AUTH_TOKEN; // Your Auth Token from www.tw
 const client  = require('twilio')(accountSid, authToken)
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
-const { MEMBERS, VOICE_PARAMS } = require("../lib/");
+const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
-const { parse } = require('querystring');
-
-import { GENERATE_CALL_LIST } from "../lib";
+import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT, GENERATE_CALL_LIST } from "../lib";
 import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING } from "../lib/messageTemplates";
-import { handler as triggerAlert } from "../ReceiveAlert/ReceiveAlert";
+import { sendSMS } from "../lib/sendSMS";
+import { ReceiveAlert } from "../ReceiveAlert/ReceiveAlert";
+import { handler } from "./OLD_CallInstructions";
 
-export const handler = async (event, context) => {
+module.exports.ProcessCallResponse = async (event, context) => {
+  const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event)
   try {
     // trigger success condition
-    console.log("PROCESS CALL RESPONSE CALLED:", event.queryStringParameters, parse(event.body))
-    const { Command, CALL_INDEX } = event.queryStringParameters;
-    const { Called, Digits } = parse(event.body);
+    console.log("PROCESS CALL RESPONSE CALLED:", PARAMS)
+    const { Called, Digits, Command, CALL_INDEX } = PARAMS;
     console.log({Command, Called, Digits})
     
     if (!Command || !CALL_INDEX) {
-      console.log("Received Twilio Status:", parse(event.body))
+      console.log("Received Twilio Status:", PARAMS)
       return { statusCode: 200 }
     }
 
@@ -34,7 +34,7 @@ export const handler = async (event, context) => {
 
       console.log(fname,"'s handling it! Hurrah!")
       const CONTACT_LIST = GENERATE_CALL_LIST(MEMBERS, MEMBER);
-      const CONFIRMATION_SMS = MEMBER_INDEX === "0" // If the 'victim' presses 1 to cancel, then send an acknowledgement SMS
+      const CONFIRMATION_SMS = MEMBER_INDEX === 0 // If the 'victim' presses 1 to cancel, then send an acknowledgement SMS
       ? ALERT_CANCELLED
       : [ // Otherwise send a thank you + instructions SMS to the rest of the people on the list.
         `${fname}, nous vous remercions d'avoir accepté d'aider ${MEMBERS[0].fname} a la ferme de Rennetour, Saint-Viatre.`,
@@ -50,20 +50,15 @@ export const handler = async (event, context) => {
       
       console.log("Sending SMS:", CONFIRMATION_SMS)
       let to = MEMBER.phone_number;
-      to = "+33761852939" // override for testing;
+      // to = "+33761852939" // override for testing;
 
-      // Send contact SMS
-      client.messages
-        .create({
-          body: 
-          CONFIRMATION_SMS,
-          from: process.env.TWILIO_FROM_NUMBER, 
-          to
-        })
-        .then((results : {sid: string}) => console.log(`Sent SMS to ${fname}:`, results.sid))
-        .catch(console.error)
+      sendSMS(to, CONFIRMATION_SMS)
 
-      response.say(YOURE_OUR_ONLY_HOPE, VOICE_PARAMS)
+      response.say(
+        MEMBER_INDEX === 0
+        ? "L'alerte a été annullé"
+        : YOURE_OUR_ONLY_HOPE(fname)
+        , VOICE_PARAMS)
     }
     else {
       // Pressing 2, hanging up, etc.
@@ -71,7 +66,7 @@ export const handler = async (event, context) => {
       response.say(WE_WILL_KEEP_LOOKING, VOICE_PARAMS)
       
       // Call next member
-      await triggerAlert({
+      await ReceiveAlert({
         queryStringParameters: {
           Command,
           CALL_INDEX: parseInt(CALL_INDEX) + 1 // TODO wrap around / handle end of list behavior
@@ -91,7 +86,7 @@ export const handler = async (event, context) => {
   }
 }
 
-
+module.exports.handler = module.exports.ProcessCallResponse;
 
 // CALL DIGIT RESPONSE:
 // {
