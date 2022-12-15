@@ -1,7 +1,11 @@
-import { MEMBERS } from "./members";
+
 import { Imember } from "./member"
 import { HandlerEvent } from "@netlify/functions";
-export { MEMBERS } from "./members";
+
+
+export const REAL_MEMBERS = JSON.parse(process.env.REAL_MEMBERS || "{}")
+export const TEST_MEMBERS = JSON.parse(process.env.TEST_MEMBERS || "{}")
+export const MEMBERS = process.env.USE_REAL_MEMBERS === "true" ? TEST_MEMBERS : REAL_MEMBERS;
 
 export const VOICE_PARAMS =  {
 	voice: process.env.TWILIO_VOICE_GENDER,
