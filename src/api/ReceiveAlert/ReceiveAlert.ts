@@ -12,7 +12,7 @@ let Command; // Defined outside handler so it can persist
 
 export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) => {
 	console.log("Starting ReceiveAlert")
-	// process.env.DEPLOY_URL = "https://alert-system-f7e8fc.netlify.live"; // update this in dev when relaunching the server
+	let DEPLOY_URL = "https://alerte.foucauld.org" || "https://alert-system-f7e8fc.netlify.live"; // update this in dev when relaunching the server
 
 	Command = Command || Body || "ALERT_TRIGGERED";
 
@@ -32,7 +32,7 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 		)
 	}
 	try {
-			let callInstructionsUrl = `${process.env.DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
+			let callInstructionsUrl = `${DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
 			let to = MEMBERS[MEMBER_INDEX].phone_number;
 
 
