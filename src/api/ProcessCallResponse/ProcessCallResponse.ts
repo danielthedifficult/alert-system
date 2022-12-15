@@ -50,7 +50,6 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
       
       console.log("Sending SMS:", CONFIRMATION_SMS)
       let to = MEMBER.phone_number;
-      // to = "+33761852939" // override for testing;
 
       sendSMS(to, CONFIRMATION_SMS)
 
@@ -88,16 +87,16 @@ module.exports.handler = module.exports.ProcessCallResponse;
 
 // CALL DIGIT RESPONSE:
 // {
-//   'AccountSid' => 'AC75e56322da1c3d47afcab7c2d4cb9e01',
+//   'AccountSid' => 'accountsid',
 //   'ApiVersion' => '2010-04-01',
 //   'CallSid' => 'CA0bbba62736371afa9564bc025c071a46',
 //   'CallStatus' => 'in-progress',
-//   'Called' => '+33761852939',
+//   'Called' => '+number',
 //   'CalledCity' => '',
 //   'CalledCountry' => 'FR',
 //   'CalledState' => '',
 //   'CalledZip' => '',
-//   'Caller' => '+33644645153',
+//   'Caller' => '+number',
 //   'CallerCity' => '',
 //   'CallerCountry' => 'FR',
 //   'CallerState' => '',
@@ -105,12 +104,12 @@ module.exports.handler = module.exports.ProcessCallResponse;
 //   'Digits' => '1',
 //   'Direction' => 'outbound-api',
 //   'FinishedOnKey' => '',
-//   'From' => '+33644645153',
+//   'From' => '+number',
 //   'FromCity' => '',
 //   'FromCountry' => 'FR',
 //   'FromState' => '',
 //   'FromZip' => '',
-//   'To' => '+33761852939',
+//   'To' => '+number',
 //   'ToCity' => '',
 //   'ToCountry' => 'FR',
 //   'ToState' => '',
@@ -120,7 +119,7 @@ module.exports.handler = module.exports.ProcessCallResponse;
 
   // CALL STATUS RESPONSE
   // {
-  //   'Called' => '+33761852939',
+  //   'Called' => '+number',
   //   'ToState' => '',
   //   'CallerCountry' => 'FR',
   //   'Direction' => 'outbound-api',
@@ -131,7 +130,7 @@ module.exports.handler = module.exports.ProcessCallResponse;
   //   'ToZip' => '',
   //   'SequenceNumber' => '2',
   //   'CallSid' => 'CAf34f6b0356ecd1102dc411d7e7cf2cbb',
-  //   'To' => '+33761852939',
+  //   'To' => '+number',
   //   'CallerZip' => '',
   //   'ToCountry' => 'FR',
   //   'CalledZip' => '',
@@ -139,14 +138,14 @@ module.exports.handler = module.exports.ProcessCallResponse;
   //   'CalledCity' => '',
   //   'CallStatus' => 'completed',
   //   'Duration' => '1',
-  //   'From' => '+33644645153',
+  //   'From' => '+number',
   //   'CallDuration' => '16',
-  //   'AccountSid' => 'AC75e56322da1c3d47afcab7c2d4cb9e01',
+  //   'AccountSid' => 'accountsid',
   //   'CalledCountry' => 'FR',
   //   'CallerCity' => '',
   //   'ToCity' => '',
   //   'FromCountry' => 'FR',
-  //   'Caller' => '+33644645153',
+  //   'Caller' => '+number',
   //   'FromCity' => '',
   //   'CalledState' => '',
   //   'FromZip' => '',

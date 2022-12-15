@@ -1,7 +1,7 @@
 # example netlify.toml
 [build]
   command = "npm run build"
-  # publish = "dist"
+  publish = "dist"
   functions = "src/api"
 [functions]
   included_files = ["lib/**"]
@@ -11,6 +11,10 @@
   [[redirects]]
    from = "/api/:function"
    to = "/.netlify/functions/:function"
+   status = 200
+  [[redirects]]
+   from = "/*"
+   to = "/public/ToutVaBien.html"
    status = 200
 
   ## (optional) Settings for Netlify Dev

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "netlify dev --live",
     "test": "jest --watchAll",
-    "build": "echo 'no build command yet!'",
+    "build": "rm -rf ./dist/* && cp -r ./public ./dist",
     "start": "npm run start"
   },
   "dependencies": {

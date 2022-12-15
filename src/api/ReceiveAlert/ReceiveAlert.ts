@@ -23,7 +23,6 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 	
 	if (CALL_INDEX > MEMBERS.length * MAX_RETRIES) {
 		console.log("Max retries attained, giving up!")
-		let { fname } = MEMBERS[MEMBER_INDEX];
 		return await MessageAllMembers(MEMBERS, (	
 				(m:Imember) => `${m.fname}, Marie Françoise a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous. Débrouillez-vous :\n` 
 				+ GENERATE_CALL_LIST(MEMBERS, m)
@@ -35,7 +34,6 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 	try {
 			let callInstructionsUrl = `${process.env.DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
 			let to = MEMBERS[MEMBER_INDEX].phone_number;
-			// to = "+33761852939" // override for testing
 
 
 			return makeCall({to, callInstructionsUrl})
