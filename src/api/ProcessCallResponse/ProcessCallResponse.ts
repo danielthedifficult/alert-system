@@ -52,6 +52,8 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
       let to = MEMBER.phone_number;
 
       sendSMS(to, CONFIRMATION_SMS)
+      .then(console.log)
+      .catch(console.error)
 
       response.say(
         MEMBER_INDEX === 0
@@ -67,7 +69,7 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
       // Call next member
       await ReceiveAlert({
           Command,
-          CALL_INDEX: parseInt(CALL_INDEX) + 1 // TODO wrap around / handle end of list behavior
+          CALL_INDEX: parseInt(CALL_INDEX) + 1
       })
     }
   // Render the response as XML in reply to the webhook request
