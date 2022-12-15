@@ -36,7 +36,7 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 			let to = MEMBERS[MEMBER_INDEX].phone_number;
 
 
-			return makeCall({to, callInstructionsUrl})
+			return await makeCall({to, callInstructionsUrl})
 			.then((call) => {
 				console.log(call)
 				console.log(
