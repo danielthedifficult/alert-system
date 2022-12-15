@@ -12,7 +12,7 @@ import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING } from "../l
 import { sendSMS } from "../lib/sendSMS";
 import { ReceiveAlert } from "../ReceiveAlert/ReceiveAlert";
 
-export const ProcessCallResponse = async (event:HandlerEvent) => {
+module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
   const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event)
   try {
     // trigger success condition

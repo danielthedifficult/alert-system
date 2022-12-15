@@ -1,3 +1,4 @@
+import { MEMBERS } from "../lib";
 const { AllClear } = require("./AllClear");
 
 test("Tests messaging all members", async () => {
