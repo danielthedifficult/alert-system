@@ -10,7 +10,7 @@ export const VOICE_PARAMS =  {
 export const GET_INITIALS = (NAME : string) => NAME.split("-").map(n => `${n.slice(0,1)}.`).join(" ")
 
 export const GENERATE_CALL_LIST = (members:Array<Imember>, member : Imember) =>  members
-			.filter((t) => t.phone_number !== member.phone_number) // remove the member him/herself
+			.filter((t) => joiner(t) !== joiner(member)) // remove the member him/herself
 			.map((m) => `${GET_INITIALS(m.fname)} ${m.lname} : ${m.phone_number}`)
 			.join(`\n\n`); // add newlines for formatting
 
@@ -35,3 +35,14 @@ export const EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT = ({queryStringParameters = 
 	console.log("Extracted params:", PARAMS)
 	return PARAMS;
 }
+
+/**
+ * 
+ * @param obj 
+ * @returns string of all properties strung together for an easy comparison. Won't work if props are not in same order, which is unpredicatble in JS, right?
+ */
+export function joiner(obj:Object) {
+	return Object.values(obj).join("")
+ }
+
+ export const generateAllClearLink = (id:number) => `alerte.foucauld.org/ToutVaBien?mid=${id}`

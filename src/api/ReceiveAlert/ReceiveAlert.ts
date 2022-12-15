@@ -1,33 +1,42 @@
 import { HandlerEvent } from "@netlify/functions";
-import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT } from "../lib";
+import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT, generateAllClearLink, GENERATE_CALL_LIST } from "../lib";
 import { makeCall } from "../lib/makeCall";
 import { MessageAllMembers } from "../AllClear/AllClear"
 import { Imember } from "../lib/member";
 import { CLICK_BELOW_IF_ALL_OK } from "../lib/messageTemplates";
-
-// SET PROC VARS HERE TO AVOID RESTARTING SERVER
-process.env.NODE_ENV = "test"
 
 
 const { MEMBERS, GET_MEMBER_INDEX } = require("../lib/");
 
 let Command; // Defined outside handler so it can persist
 
-module.exports.ReceiveAlert = async (event:HandlerEvent) => {
+export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) => {
 	console.log("Starting ReceiveAlert")
-	let { CALL_INDEX = 0, Command, Body } = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
+	// process.env.DEPLOY_URL = "https://alert-system-f7e8fc.netlify.live"; // update this in dev when relaunching the server
 
 	Command = Command || Body || "ALERT_TRIGGERED";
 
-	let MEMBER_INDEX = GET_MEMBER_INDEX(CALL_INDEX || "0")
+	let MEMBER_INDEX = GET_MEMBER_INDEX(CALL_INDEX || "0");
 
-	console.log("ReceiveAlert CALLED, COMMAND is ", Command, "for MEMBER_INDEX", MEMBER_INDEX)
-
-		process.env.DEPLOY_URL = "https://alert-system-744d13.netlify.live"; // update this in dev when relaunching the server
-		try {
+	const MAX_RETRIES = parseInt(process.env.HOW_MANY_TIMES_TO_CALL_MEMBERS || "1");
+	console.log("ReceiveAlert CALLED, COMMAND is ", CALL_INDEX, Command, "for MEMBER_INDEX", MEMBER_INDEX)
+	
+	if (CALL_INDEX > MEMBERS.length * MAX_RETRIES) {
+		console.log("Max retries attained, giving up!")
+		let { fname } = MEMBERS[MEMBER_INDEX];
+		return await MessageAllMembers(MEMBERS, (	
+				(m:Imember) => `${m.fname}, Marie Françoise a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous. Débrouillez-vous :\n` 
+				+ GENERATE_CALL_LIST(MEMBERS, m)
+				+ "\n" + CLICK_BELOW_IF_ALL_OK + "\n"
+				+ generateAllClearLink(MEMBERS.indexOf(m))
+			) 
+		)
+	}
+	try {
 			let callInstructionsUrl = `${process.env.DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
 			let to = MEMBERS[MEMBER_INDEX].phone_number;
 			// to = "+33761852939" // override for testing
+
 
 			return makeCall({to, callInstructionsUrl})
 			.then((call) => {
@@ -50,4 +59,6 @@ module.exports.ReceiveAlert = async (event:HandlerEvent) => {
 
 };
 
-module.exports.handler = module.exports.ReceiveAlert;
+export const handler = async (event:HandlerEvent) => {
+	return await ReceiveAlert(EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event))
+}

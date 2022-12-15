@@ -4,9 +4,7 @@ const client  = require('twilio')(accountSid, authToken)
 
 
 export const sendSMS = (to : string, body : string, sid:string|undefined = process.env.DM_TWILIO_ACCOUNT_SID, token:string|undefined = process.env.DM_TWILIO_AUTH_TOKEN) => {
-   return new Promise(async (resolve, reject) => {
-
-     
+   return new Promise(async (resolve, reject) => {     
      let from = process.env.TWILIO_FROM_NUMBER;
      // Send contact SMS
      return await client.messages

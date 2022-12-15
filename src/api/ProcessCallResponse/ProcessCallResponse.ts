@@ -7,8 +7,8 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
 import { HandlerEvent } from "@netlify/functions";
-import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT, GENERATE_CALL_LIST } from "../lib";
-import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING } from "../lib/messageTemplates";
+import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT, generateAllClearLink, GENERATE_CALL_LIST } from "../lib";
+import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING, CLICK_BELOW_IF_ALL_OK } from "../lib/messageTemplates";
 import { sendSMS } from "../lib/sendSMS";
 import { ReceiveAlert } from "../ReceiveAlert/ReceiveAlert";
 
@@ -42,8 +42,8 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
         "",
         `D'autres numèros qui pourraient vous etre utile :`,
         `${CONTACT_LIST}`,
-        `CLIQUEZ LE LIEN CI DESSOUS SI VOUS AVEZ CONFIRMÉ QUE LA SITUATION EST OK :`,
-        "[lien eventuel]",
+        CLICK_BELOW_IF_ALL_OK,
+        generateAllClearLink(MEMBER_INDEX),
 
         //,
       ].join("\n");
@@ -67,10 +67,8 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
       
       // Call next member
       await ReceiveAlert({
-        queryStringParameters: {
           Command,
           CALL_INDEX: parseInt(CALL_INDEX) + 1 // TODO wrap around / handle end of list behavior
-        }
       })
     }
   // Render the response as XML in reply to the webhook request
@@ -80,7 +78,7 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
     body: response.toString()
   };
 
-  } catch (error) {
+  } catch (error:any) {
     console.error(error)
     return { statusCode: 500, body: error.toString() }
   }

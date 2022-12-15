@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Marie-Françoise</title>
+   <style type="text/css">.lyon {
+      overflow: auto;
+      position: relative;
+      visibility: visible;
+      z-index: auto;
+      height: auto;
+      width: auto;
+      margin-top: 200px;
+   }
+   body {
+      background-color: #333;
+      color: #FAFAFA;
+      text-align: center;
+   }
+   </style>
+</head>
+<body>
+   <body>
+   <div align="center" class="lyon" id="lyon">
+      <img align="absmiddle" height="327" src="https://www.foucauld.fr/images/lyon.png" width="289" /></div>
+   <div id="system"><h1 id="header">Si tout va bien, cliquez ici pour l'indiquer aux autres :</h1>
+   <button id="allclear" style="height:10vh;width:40vw" onclick="AllClear()">Tout va bien</button>
+</div>
+</body>
+<script>
+   if (window.location.search.length < 6) document.getElementById("system").remove()
+   function AllClear () {
+      document.getElementById("allclear").remove();
+      fetch(`${window.location.origin}/api/AllClear${window.location.search}`) // recover the member's id in the query.
+      .then(async result => {
+         console.log(result)
+         if (result.status < 300) document.getElementById("header").innerText = await result.text();
+         else throw Error(result.body)
+      })
+      .catch(e => {
+         document.getElementById("header").innerText = e.message;
+      })
+   }
+</script>
+</html>

@@ -1,1 +1,1 @@
-export interface Imember { fname: string, lname: string, phone_number: string }
+export interface Imember extends Array { fname: string, lname: string, phone_number: string }
