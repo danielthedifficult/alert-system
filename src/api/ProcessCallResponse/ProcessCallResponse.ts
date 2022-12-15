@@ -51,15 +51,15 @@ module.exports.ProcessCallResponse = async (event:HandlerEvent) => {
       console.log("Sending SMS:", CONFIRMATION_SMS)
       let to = MEMBER.phone_number;
 
-      sendSMS(to, CONFIRMATION_SMS)
-      .then(console.log)
-      .catch(console.error)
-
       response.say(
         MEMBER_INDEX === 0
         ? "L'alerte a été annullé"
         : YOURE_OUR_ONLY_HOPE(fname)
         , VOICE_PARAMS)
+        
+      await sendSMS(to, CONFIRMATION_SMS)
+        .then(console.log)
+        .catch(console.error)
     }
     else {
       // Pressing 2, hanging up, etc.
