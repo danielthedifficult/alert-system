@@ -1,9 +1,10 @@
+import { Handler, HandlerEvent } from "@netlify/functions";
 import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT } from "../lib";
 
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
-export const handler = async (event) => {
+export const handler:Handler = async (event:HandlerEvent) => {
 
   const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
 

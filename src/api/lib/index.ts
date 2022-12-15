@@ -1,5 +1,6 @@
 import { MEMBERS } from "./members";
-import { Imember } from "./iface"
+import { Imember } from "./member"
+import { HandlerEvent } from "@netlify/functions";
 export { MEMBERS } from "./members";
 
 export const VOICE_PARAMS =  {
@@ -23,10 +24,10 @@ export const GET_MEMBER_INDEX = (input:(string)) => {
 }
 
 const { parse } = require('querystring');
-export const EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT = ({queryStringParameters = {}, body = ""}) => {
+export const EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT = ({queryStringParameters = {}, body}:HandlerEvent) => {
 	let POST = {}; 
 	try {
-		POST = JSON.parse(body)
+		POST = JSON.parse(body || "{}")
 	} catch (e) {
 		POST = parse(body)
 	}

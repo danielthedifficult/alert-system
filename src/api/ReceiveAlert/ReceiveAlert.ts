@@ -1,3 +1,4 @@
+import { HandlerEvent } from "@netlify/functions";
 import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT } from "../lib";
 import { makeCall } from "../lib/makeCall";
 import { MessageAllMembers } from "../AllClear/AllClear"
@@ -12,7 +13,7 @@ const { MEMBERS, GET_MEMBER_INDEX } = require("../lib/");
 
 let Command; // Defined outside handler so it can persist
 
-module.exports.ReceiveAlert = async (event) => {
+module.exports.ReceiveAlert = async (event:HandlerEvent) => {
 	console.log("Starting ReceiveAlert")
 	let { CALL_INDEX = 0, Command, Body } = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
 

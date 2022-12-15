@@ -6,13 +6,13 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 const { MEMBERS, VOICE_PARAMS, GET_MEMBER_INDEX } = require("../lib/");
 
+import { HandlerEvent } from "@netlify/functions";
 import { EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT, GENERATE_CALL_LIST } from "../lib";
 import { ALERT_CANCELLED, YOURE_OUR_ONLY_HOPE, WE_WILL_KEEP_LOOKING } from "../lib/messageTemplates";
 import { sendSMS } from "../lib/sendSMS";
 import { ReceiveAlert } from "../ReceiveAlert/ReceiveAlert";
-import { handler } from "./OLD_CallInstructions";
 
-module.exports.ProcessCallResponse = async (event, context) => {
+export const ProcessCallResponse = async (event:HandlerEvent) => {
   const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event)
   try {
     // trigger success condition
