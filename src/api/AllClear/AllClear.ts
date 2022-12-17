@@ -49,7 +49,7 @@ export const AllClear = async (event:HandlerEvent) => {
   
   let BUILD_MESSAGE = ({ fname = "Cher ami"}) => `${fname}, nous vous avons appellé car une alarme a été déclenché chez Marie Francoise de Pitray. Entretemps, ${RESPONSIBLE_PARTY.fname} ${RESPONSIBLE_PARTY.lname} a accepté de s'en occuper.`;
   let MEMBERS_TO_MESSAGE = MEMBERS
-    .filter((m) => joiner(m) !== joiner(MEMBERS[PARAMS.mid]) ) // filtering on phone number didn't work if  I wanted to use my own on multiple members for testing
+    .filter((m:Imember) => joiner(m) !== joiner(MEMBERS[PARAMS.mid]) ) // filtering on phone number didn't work if  I wanted to use my own on multiple members for testing
 
   console.log(BUILD_MESSAGE(RESPONSIBLE_PARTY), MEMBERS_TO_MESSAGE)
   return await MessageAllMembers(MEMBERS_TO_MESSAGE, BUILD_MESSAGE)

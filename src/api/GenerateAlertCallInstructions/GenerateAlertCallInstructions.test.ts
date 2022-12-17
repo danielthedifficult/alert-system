@@ -1,5 +1,5 @@
 import { GET_MEMBER_INDEX, MEMBERS } from "../lib";
-const validate = require('w3c-xml-validator')
+// const validate = require('w3c-xml-validator')
 const { GenerateAlertCallInstructions } = require("./GenerateAlertCallInstructions");
 
 describe("Tests Generating Twiml instructions", () => {
