@@ -354,9 +354,10 @@ code {
 
 </style>
 
-<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+<script src="https://unpkg.com/mermaid/dist/mermaid.js"></script>
 </head>
 <body>
+	<h1>test</h1>
   <script>
     mermaid.initialize({
       startOnLoad: true,
@@ -366,10 +367,14 @@ code {
     });
   </script>
 <div class="mermaid">
-<p>%% https://mermaid-js.github.io/mermaid/#/flowchart?id=flowchart-orientation
-%% TODO: Try this as a stateDiagram?
-flowchart TB
-A--> B</p>
+<p>
+	graph TD
+	A[Christmas] -->|Get money| B(Go shopping)
+	B --> C{Let me think}
+	C -->|One| D[Laptop]
+	C -->|Two| E[iPhone]
+	C -->|Three| F[fa:fa-car Car]
+</p>
 </div>
 
 </body>

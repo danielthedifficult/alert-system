@@ -6,6 +6,7 @@ import { sendSMS } from "../lib/sendSMS";
 
 const { parse } = require('querystring');
 
+console.log("MEMBERS",MEMBERS)
 export const MessageAllMembers = async (MEMBERS_TO_MESSAGE : Array<Imember>, BUILD_MESSAGE:Function) => {
   try {
     let messages = MEMBERS_TO_MESSAGE
