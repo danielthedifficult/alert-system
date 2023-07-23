@@ -1,0 +1,37 @@
+[
+	{
+		"fname": "Marie-Françoise",
+		"lname": "de Pitray",
+		"phone_number": "+33616285563"
+	},
+	{ "fname": "Daniel", "lname": "Mulroy", "phone_number": "+33761852939" },
+	{
+		"fname": "Jean-Cassien",
+		"lname": "de Foucauld",
+		"phone_number": "+33761852939"
+	},
+	{
+		"fname": "Caroline",
+		"lname": "de Foucauld",
+		"phone_number": "+33761852939"
+	},
+	{ "fname": "Odile", "lname": "Lopes", "phone_number": "+33761852939" },
+	{ "fname": "Jean", "lname": "Lopes", "phone_number": "+33761852939" },
+	{
+		"fname": "Genevieve",
+		"lname": "de Foucauld",
+		"phone_number": "+33761852939"
+	},
+	{ "fname": "Luc", "lname": "Joubert", "phone_number": "+33761852939" },
+	{
+		"fname": "Caroline",
+		"lname": "de La Palme",
+		"phone_number": "+33761852939"
+	},
+	{
+		"fname": "Guillaume",
+		"lname": "Bourdeaux",
+		"phone_number": "+33761852939"
+	},
+	{ "fname": "Ines", "lname": "Bourdeaux", "phone_number": "+33761852939" }
+]

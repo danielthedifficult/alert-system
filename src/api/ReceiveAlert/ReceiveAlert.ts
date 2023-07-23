@@ -10,7 +10,7 @@ const { MEMBERS, GET_MEMBER_INDEX } = require("../lib/");
 
 let Command; // Defined outside handler so it can persist
 
-export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) => {
+export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Body = "" }) => {
 	console.log("Starting ReceiveAlert")
 	let DEPLOY_URL = "https://alerte.foucauld.org" || "https://alert-system-f7e8fc.netlify.live"; // update this in dev when relaunching the server
 
@@ -20,23 +20,23 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 
 	const MAX_RETRIES = parseInt(process.env.HOW_MANY_TIMES_TO_CALL_MEMBERS || "1");
 	console.log("ReceiveAlert CALLED, COMMAND is ", CALL_INDEX, Command, "for MEMBER_INDEX", MEMBER_INDEX)
-	
+
 	if (CALL_INDEX > MEMBERS.length * MAX_RETRIES) {
 		console.log("Max retries attained, giving up!")
-		return await MessageAllMembers(MEMBERS, (	
-				(m:Imember) => `${m.fname}, Marie Françoise a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous. Débrouillez-vous :\n` 
+		return await MessageAllMembers(MEMBERS, (
+			(m: Imember) => `${m.fname}, Marie Françoise a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous :\n`
 				+ GENERATE_CALL_LIST(MEMBERS, m)
 				+ "\n" + CLICK_BELOW_IF_ALL_OK + "\n"
 				+ generateAllClearLink(MEMBERS.indexOf(m))
-			) 
+		)
 		)
 	}
 	try {
-			let callInstructionsUrl = `${DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
-			let to = MEMBERS[MEMBER_INDEX].phone_number;
+		let callInstructionsUrl = `${DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${Command}&CALL_INDEX=${CALL_INDEX}`;
+		let to = MEMBERS[MEMBER_INDEX].phone_number;
 
 
-			return await makeCall({to, callInstructionsUrl})
+		return await makeCall({ to, callInstructionsUrl })
 			.then((call) => {
 				console.log(call)
 				console.log(
@@ -49,7 +49,7 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 				return { statusCode: 500, body: "COULD NOT COMPLETE CALL" };
 			});
 
-		
+
 
 	} catch (e) {
 		console.error(e);
@@ -57,6 +57,6 @@ export const ReceiveAlert = async ({CALL_INDEX = 0, Command = "", Body = ""}) =>
 
 };
 
-export const handler = async (event:HandlerEvent) => {
+export const handler = async (event: HandlerEvent) => {
 	return await ReceiveAlert(EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event))
 }
