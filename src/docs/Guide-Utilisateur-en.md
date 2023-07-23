@@ -23,7 +23,7 @@ To allow a comfortable autonomy to Marie-Françoise, while keeping security agai
 2. The system will initiate calls in **sequence**, trying to reach each member before moving on to the next, **even if the member does not answer.**
 3. The system will **repeat the list in a loop** until it finds a member who *accepts to take charge of the situation.*
 
-::: mermaid
+```mermaid
 %% https://mermaid-js.github.io/mermaid/#/flowchart?id=flowchart-orientation
 %% TODO: Try this as a stateDiagram?
 flowchart TB
@@ -46,7 +46,7 @@ flowchart TB
        G --> H(Click on the link):::useraction
        H --> I(Send SMS\n'everything is fine' to\n each member\nof the list):::automatic
      end
-:::
+```
 
 ## 4. Agree to intervene
 
