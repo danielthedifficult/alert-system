@@ -24,7 +24,7 @@ export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Body = "" }) 
 	if (CALL_INDEX > MEMBERS.length * MAX_RETRIES) {
 		console.log("Max retries attained, giving up!")
 		return await MessageAllMembers(MEMBERS, (
-			(m: Imember) => `${m.fname}, Marie Françoise a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous :\n`
+			(m: Imember) => `${m.fname}, ${MEMBERS[0].fname} a déclenché une alerte, mais nous n'avons pas pu joindre l'un d'entre vous :\n`
 				+ GENERATE_CALL_LIST(MEMBERS, m)
 				+ "\n" + CLICK_BELOW_IF_ALL_OK + "\n"
 				+ generateAllClearLink(MEMBERS.indexOf(m))
