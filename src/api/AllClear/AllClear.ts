@@ -1,7 +1,7 @@
 // Docs on event and context https://docs.netlify.com/functions/build/#code-your-function-2
 import { HandlerEvent } from "@netlify/functions";
 import {
-	MEMBERS,
+	GET_MEMBERS,
 	EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT,
 	joiner,
 } from "../lib";
@@ -10,7 +10,6 @@ import { sendSMS } from "../lib/sendSMS";
 
 const { parse } = require("querystring");
 
-console.log("MEMBERS", MEMBERS);
 export const MessageAllMembers = async (
 	MEMBERS_TO_MESSAGE: Array<Imember>,
 	BUILD_MESSAGE: Function
@@ -47,8 +46,9 @@ export const MessageAllMembers = async (
 
 export const AllClear = async (event: HandlerEvent) => {
 	console.log("AllClear starting...");
-	const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
-	let RESPONSIBLE_PARTY: Imember = MEMBERS[PARAMS.mid];
+	const { MEMBERS, Command, Client, mid } = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
+	console.log("MEMBERS", MEMBERS);
+	let RESPONSIBLE_PARTY: Imember = MEMBERS[mid];
 	console.log(RESPONSIBLE_PARTY, MEMBERS);
 	// trigger success condition
 	console.log(

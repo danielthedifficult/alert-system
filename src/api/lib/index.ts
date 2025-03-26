@@ -3,7 +3,7 @@ import { Imember } from "./member"
 import { HandlerEvent } from "@netlify/functions";
 
 
-export const MEMBERS = JSON.parse(process.env.MEMBERS || "{}");
+export const GET_MEMBERS = (CLIENT: string) => JSON.parse(process.env[`${CLIENT}_MEMBERS`] || "{}");
 
 export const VOICE_PARAMS = {
 	voice: process.env.TWILIO_VOICE_GENDER,
@@ -19,7 +19,7 @@ export const GENERATE_CALL_LIST = (members: Array<Imember>, member: Imember) => 
 
 // if input < total member length return the member
 // if input >= total member length, return the member, starting with 1 (skip the 'alerting' person themselves when repeating)
-export const GET_MEMBER_INDEX = (input: (string)) => {
+export const GET_MEMBER_INDEX = (input: (string), MEMBERS: Array<Object>) => {
 	let index = parseInt(input);
 	if (isNaN(index)) throw new Error("Input is NaN");
 	else return (index % MEMBERS.length)
@@ -33,7 +33,12 @@ export const EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT = ({ queryStringParameters =
 	} catch (e) {
 		POST = parse(body)
 	}
+
 	let PARAMS: any = { ...POST, ...queryStringParameters }
+	let [Client, Alert_Type] = decodeURI(PARAMS.Command).split(" ");
+	PARAMS.Client = Client;
+	PARAMS.Alert_Type = Alert_Type;
+
 	console.log("Extracted params:", PARAMS)
 	return PARAMS;
 }
@@ -47,4 +52,4 @@ export function joiner(obj: Object) {
 	return Object.values(obj).join("")
 }
 
-export const generateAllClearLink = (id: number) => `alerte.foucauld.org/ToutVaBien?mid=${id}`
+export const generateAllClearLink = (id: number, Client: string) => `alerte.foucauld.org/ToutVaBien?mid=${id}&Client=${Client}`
