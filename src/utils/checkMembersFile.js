@@ -8,9 +8,11 @@ const schema = {
 	required: ["fname, lname", "phone_number"],
 	additionalProperties: false,
 };
-try {
-	JSON.parse(process.env.MEMBERS);
-} catch (e) {
-	console.error("🚨 STOPPING BUILD - MEMBERS env var is not valid JSON");
-	throw new Error("INVALID_MEMBERS");
+for (MEMBERS of ["TMF_MEMBERS", "GPJ_MEMBERS"]) {
+	try {
+		JSON.parse(process.env.MEMBERS);
+	} catch (e) {
+		console.error(`🚨 STOPPING BUILD - env var '${MEMBERS}' is not valid JSON`);
+		throw new Error("INVALID_MEMBERS");
+	}
 }
