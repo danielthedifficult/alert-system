@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "netlify dev --live",
 		"test": "jest --watchAll",
-		"build": "node src/utils/checkMembersFile.js && rm -rf ./dist/* && cp -r ./public ./dist",
+		"build": "rm -rf ./dist/* && cp -r ./public ./dist",
 		"start": "npm run start"
 	},
 	"dependencies": {
