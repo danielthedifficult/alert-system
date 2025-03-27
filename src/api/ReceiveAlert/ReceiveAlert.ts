@@ -10,9 +10,9 @@ const { GET_MEMBERS, GET_MEMBER_INDEX } = require("../lib/");
 
 export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert_Type }) => {
 	console.log("Starting ReceiveAlert")
-	let DEPLOY_URL = process.env.BASE_URL; // NOTE This is not tested, but it should work.. Might need to switch to DEPLOY_URL, but I think BASE_URL is better as it will point to the expected production URL
-	// "https://alerte.foucauld.org" 
-	console.log("Using DEPLOY_URL " + process.env.BASE_URL)
+	// HACK - ideally, switch to using an env var that is correctly provided by Netlify in both local dev and production
+	let DEPLOY_URL = process.env.BASE_URL || "https://alerte.foucauld.org"; // NOTE This is not tested, but it should work.. Might need to switch to DEPLOY_URL, but I think BASE_URL is better as it will point to the expected production URL
+	console.log("Using DEPLOY_URL " + DEPLOY_URL)
 
 	if (!Alert_Type) {
 		console.error("Alert_Type not defined")
@@ -44,7 +44,7 @@ export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert
 	}
 	try {
 		let callInstructionsUrl = `${DEPLOY_URL}/api/GenerateAlertCallInstructions?Command=${encodeURI(Command)}&CALL_INDEX=${CALL_INDEX}`;
-		const statusCallback = `${process.env.DEPLOY_URL}/api/ProcessCallResponse?Command=${encodeURI(Command)}&CALL_INDEX=${MEMBER_INDEX}`
+		const statusCallback = `${DEPLOY_URL}/api/ProcessCallResponse?Command=${encodeURI(Command)}&CALL_INDEX=${MEMBER_INDEX}`
 		console.log({ MEMBERS })
 		let to = MEMBERS[MEMBER_INDEX].phone_number;
 		console.log("Calling", to, "for", Client, "because", Alert_Type)
