@@ -8,7 +8,7 @@ import { CLICK_BELOW_IF_ALL_OK } from "../lib/messageTemplates";
 
 const { GET_MEMBERS, GET_MEMBER_INDEX } = require("../lib/");
 
-export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert_Type }) => {
+export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert_Type }: { CALL_INDEX?: number, Command: string, Client: string, Alert_Type: string }) => {
 	console.log("Starting ReceiveAlert")
 	// HACK - ideally, switch to using an env var that is correctly provided by Netlify in both local dev and production
 	let DEPLOY_URL = process.env.BASE_URL || "https://alerte.foucauld.org"; // NOTE This is not tested, but it should work.. Might need to switch to DEPLOY_URL, but I think BASE_URL is better as it will point to the expected production URL
