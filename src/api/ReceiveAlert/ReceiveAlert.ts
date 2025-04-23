@@ -14,17 +14,6 @@ export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert
 	let DEPLOY_URL = process.env.BASE_URL || "https://alerte.foucauld.org"; // NOTE This is not tested, but it should work.. Might need to switch to DEPLOY_URL, but I think BASE_URL is better as it will point to the expected production URL
 	console.log("Using DEPLOY_URL " + DEPLOY_URL)
 
-	if (!Alert_Type) {
-		console.error("Alert_Type not defined")
-		return { statusCode: 500, body: "Alert_Type is not defined" }
-	} else console.log("Alert_Type is defined: " + Alert_Type)
-
-	if (!Client) {
-		console.error("Client not defined")
-		console.error({ Client, Command })
-		return { statusCode: 500, body: "Client not defined" }
-	} else console.log("Client is defined:", { Client })
-
 	const MEMBERS = GET_MEMBERS(Client);
 
 	let MEMBER_INDEX = GET_MEMBER_INDEX(CALL_INDEX || "0", MEMBERS);
@@ -69,6 +58,68 @@ export const ReceiveAlert = async ({ CALL_INDEX = 0, Command = "", Client, Alert
 
 };
 
+export const should_alert = (
+	{ Command, Client, Alert_Type }:
+		{ Command: string, Client: string | undefined, Alert_Type: string | undefined }
+) => {
+
+	// Check for the presence of the required parameters
+	if (!Alert_Type) {
+		console.error("Alert_Type not defined")
+		return { statusCode: 500, body: "Alert_Type is not defined" }
+	} else console.log("Alert_Type is defined: " + Alert_Type)
+
+	if (!Client) {
+		console.error("Client not defined")
+		console.error({ Client, Command })
+		return { statusCode: 500, body: "Client not defined" }
+	} else console.log("Client is defined:", { Client })
+
+	// Is this a specific M2M SMS command that we should ignore?
+	const IGNORE_COMMANDS_REGEX = process.env.IGNORE_COMMANDS_REGEX || false;
+	if (IGNORE_COMMANDS_REGEX) {
+		const regex = new RegExp(IGNORE_COMMANDS_REGEX);
+		if (regex.test(Command)) {
+			console.log("Ignoring alert for client", Client, "and alert type", Alert_Type, "because it matches", IGNORE_COMMANDS_REGEX);
+			return false;
+		}
+	}
+
+	// Is this an alert type that we should ignore?
+	const IGNORE_ALERT_TYPES_REGEX = process.env.IGNORE_ALERT_TYPES_REGEX || false;
+	if (IGNORE_ALERT_TYPES_REGEX) {
+		const regex = new RegExp(IGNORE_ALERT_TYPES_REGEX);
+		if (regex.test(Alert_Type)) {
+			console.log("Ignoring alert ", Alert_Type, "because it matches", IGNORE_ALERT_TYPES_REGEX);
+			return false;
+		} else console.log("Alert type", Alert_Type, "does not match", IGNORE_ALERT_TYPES_REGEX)
+	} else console.log("IGNORE_ALERT_TYPES_REGEX not defined, alerting for client", Client, "and alert type", Alert_Type)
+
+	// Is this a client that we should ignore?
+	const IGNORE_CLIENTS_REGEX = process.env.IGNORE_CLIENTS_REGEX || false;
+	if (IGNORE_CLIENTS_REGEX) {
+		const regex = new RegExp(IGNORE_CLIENTS_REGEX);
+		if (regex.test(Client)) {
+			console.log("Ignoring alert for client", Client, "because it matches", IGNORE_CLIENTS_REGEX);
+			return false;
+
+		}
+	}
+
+	// Otherwise, we should alert
+	console.log("Alerting for client", Client, "and alert type", Alert_Type);
+	return true;
+}
+
 export const handler = async (event: HandlerEvent) => {
-	return await ReceiveAlert(EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event))
+	const PARAMS = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event)
+	const shouldAlert = should_alert(PARAMS)
+	if (!shouldAlert) {
+		console.log("Alert should not be sent, returning 200")
+		return {
+			statusCode: 200,
+			body: "Alert ignored due to server-side config"
+		}
+	}
+	return await ReceiveAlert(PARAMS)
 }
