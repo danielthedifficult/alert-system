@@ -27,7 +27,7 @@ export const MessageAllMembers = async (
 				return {
 					statusCode: 200,
 					//  headers: { "content-type": "text/xml" },
-					body: `${results.length} Membres prévenu.`,
+					body: `${results.length} Membres prévenu`,
 				};
 			})
 			.catch((e) => {
@@ -46,8 +46,9 @@ export const MessageAllMembers = async (
 
 export const AllClear = async (event: HandlerEvent) => {
 	console.log("AllClear starting...");
-	const { MEMBERS, Command, Client, mid } = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
-	console.log("MEMBERS", MEMBERS);
+	const { Command, Client, mid } = EXTRACT_GET_AND_POST_PARAMS_FROM_EVENT(event);
+	const MEMBERS = GET_MEMBERS(Client);
+	console.log("AllClear called with", { Command, Client, MEMBERS });
 	let RESPONSIBLE_PARTY: Imember = MEMBERS[mid];
 	console.log(RESPONSIBLE_PARTY, MEMBERS);
 	// trigger success condition
